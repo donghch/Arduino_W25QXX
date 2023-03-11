@@ -6,7 +6,7 @@
 class W25QXX_Flash {
 
   public:
-    W25QXX_Flash();
+    W25QXX_Flash(int cs);
 
     /**
     Enable Write Mode.
@@ -25,33 +25,62 @@ class W25QXX_Flash {
     bool write_disable();
 
     /**
-      Enable Register Writing
+    Read Register (7, 0) into a byte. R7 is MSB.
     Returns:
-    - true if enabled
-    - false if not enabled
+      - Register values
     */
-    bool reg_write_enable();
-    byte read_reg_1();
-    bool write_reg_1(byte value);
-    byte read_reg_2();
-    bool write_reg_2(byte value);
-    byte read_reg_3();
-    bool write_reg_3(byte value);
-    bool erase_all();
-    bool erase_suspend();
-    bool erase_resume();
-    void power_down();
-    void release_power_down();
-    byte[] get_id();
-    byte[] get_jedec_id();
-    void global_lock();
-    void global_unlock();
-    void reset_enable();
-    void reset();
+    char read_reg_1();
+
+    /**
+    Read Register (15, 8) into a byte. R15 is MSB.
+    Returns:
+      - Resgister values
+    */
+    char read_reg_2();
+     
+    /**
+    Read Register (23, 16) into a byte. R23 is MSB.
+    Returns:
+      - Register values
+    */
+    char read_reg_3();
+
+    /**
+    Erase a flash sector (4kB).
+    Returns:
+      - true if success
+      - false if fail.
+    Post Condition:
+      - Write will be disabled
+      - Current sector may be locked
+    */
+    bool sector_erase(char* address);
+
+    /**
+    Erase a flash block (64kB).
+    Returns:
+      - true if success
+      - false if fail.
+    Post conditions:
+      - Write will be disabled
+      - Current sector may be locked
+    */
+    bool block_erase(char* address);
+
+    /**
+    Erase whole flash chip
+    Returns:
+      - true if success
+      - false if fail.
+    Post conditions:
+      - Write will be disabled
+      - Current sector may be locked
+    */
+    bool chip_erase();
 
   private:
+    int pin;
     bool write_enabled();
-
 };
 
 
